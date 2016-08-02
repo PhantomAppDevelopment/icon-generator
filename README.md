@@ -18,7 +18,7 @@ To compile this application you only require a recent version of Apache Flex and
 
 You can test this app by downloading it directly from GitHub. You only require to have the AIR runtime installed on your Windows or OSX machine.
 
-[![Download](http://i.imgur.com/3C3qwtv.png)](https://)
+[![Download](http://i.imgur.com/3C3qwtv.png)](https://github.com/PhantomAppDevelopment/icon-generator/releases/download/1.0.0/IconGenerator.air)
 
 ## Donations
 
