@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="800" maxWidth="800" minHeight="650" maxHeight="650" applicationComplete="init(event)"  backgroundColor="#333333" xmlns:views="views.*">
+	
+	<fx:Style source="styles.css"/>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			protected function init(event:FlexEvent):void
+			{
+
+			}
+			
+			protected function goIcons(event:MouseEvent):void
+			{
+				myTabNavigator.selectedIndex = 0;
+			}
+			
+			protected function goImages(event:MouseEvent):void
+			{
+				myTabNavigator.selectedIndex = 1;
+			}
+						
+			protected function goSettings(event:MouseEvent):void
+			{
+				myTabNavigator.selectedIndex = 2;
+			}
+			
+			protected function goHelp(event:MouseEvent):void
+			{
+				myTabNavigator.selectedIndex = 3;
+			}
+						
+		]]>
+	</fx:Script>
+	
+	<s:Rect left="0" top="0" bottom="0" width="100">
+		<s:fill>
+			<s:SolidColor color="#111111"/>
+		</s:fill>
+	</s:Rect>
+	
+	<s:VGroup left="0" top="0" bottom="0" width="100" horizontalAlign="center">
+		<s:Spacer width="10" height="30"/>
+		<s:Image width="60" height="60" source="@Embed('assets/images/iphone.png')" buttonMode="true" smooth="true" click="goIcons(event)"/>
+		<s:Label text="App Icons" styleName="myLabel" fontSize="12"/>
+		
+		<s:Spacer width="10" height="10"/>
+		<s:Image width="60" height="60" source="@Embed('assets/images/ipad.png')" buttonMode="true" smooth="true" click="goImages(event)"/>
+		<s:Label text="Launch Images" styleName="myLabel" fontSize="12"/>
+
+		<s:Spacer height="100%" width="10"/>
+		
+		<s:Image width="60" height="60" source="@Embed('assets/images/settings.png')" buttonMode="true" smooth="true" click="goSettings(event)"/>
+		<s:Label text="Settings" styleName="myLabel" fontSize="12"/>
+		<s:Spacer width="10" height="5"/>
+		
+		<s:Image width="60" height="60" source="@Embed('assets/images/help.png')" buttonMode="true" smooth="true" click="goHelp(event)"/>
+		<s:Label text="Help" styleName="myLabel" fontSize="12"/>
+		<s:Spacer height="20" width="10"/>
+	</s:VGroup>
+	
+	<mx:TabNavigator id="myTabNavigator" left="100" right="0" top="0" bottom="0" borderStyle="none" paddingTop="0" tabHeight="0" tabWidth="0" creationPolicy="auto" backgroundAlpha="0">
+		<views:IconView />
+		<views:ImagesView />
+		<views:SettingsView />
+		<views:HelpView />
+	</mx:TabNavigator>
+	
+</s:WindowedApplication>

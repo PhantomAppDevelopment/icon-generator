@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" creationComplete="init(event)">
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.graphics.codec.PNGEncoder;
+			
+			import spark.components.CheckBox;
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable] private var AllArray:Array;
+			[Bindable] private var AndroidArray:Array;
+			[Bindable] private var iOSArray:Array;		
+			[Bindable] private var DesktopArray:Array;
+			[Bindable] private var preset1:Array;
+			[Bindable] private var preset2:Array;
+			[Bindable] private var preset3:Array;
+			
+			private var fileRef:FileReference;
+			private var myEncoder:PNGEncoder;			
+			
+			protected function init(event:FlexEvent):void
+			{
+				AllArray = new Array(29, 36, 40, 48, 50, 57, 58, 60, 72, 75, 76, 80, 87, 96, 100, 114, 120, 144, 152, 167, 180, 192, 512, 1024);
+				AndroidArray = new Array(36, 48, 72, 96, 144, 192, 512);
+				iOSArray = new Array(29, 40, 48, 50, 57, 58, 60, 72, 75, 76, 80, 87, 100, 114, 120, 144, 152, 167, 180, 512, 1024);
+				DesktopArray = new Array(16, 32, 48, 128);
+				
+				fileRef = new FileReference();
+				fileRef.addEventListener(Event.SELECT, selectHandler);
+				fileRef.addEventListener(Event.COMPLETE, completeHandler);
+			}
+			
+			private function selectHandler(event:Event):void
+			{
+				fileRef.load();
+			}
+			
+			private function completeHandler(event:Event):void
+			{
+				currentState = "PreviewState";
+				iconLarge.source = fileRef.data;
+			}
+			
+			protected function grabImage(event:MouseEvent):void
+			{
+				var formatsArray:Array = [];
+				formatsArray.push(new FileFilter("Images", ".gif;*.jpeg;*.jpg;*.png"));
+				fileRef.browse(formatsArray);
+			}
+			
+			protected function goHome(event:MouseEvent):void
+			{
+				currentState = "HomeState";
+			}
+			
+			protected function goConfigure(event:MouseEvent):void
+			{
+				currentState = "ExportState";
+				loadCustomPresets();
+				generateCheckboxes();
+			}
+			
+			private function loadCustomPresets():void
+			{
+				var file:File = File.applicationStorageDirectory.resolvePath("iconpresets.data");
+				
+				if(file.exists)
+				{
+					var fileStream:FileStream = new FileStream();
+					fileStream.open(file, FileMode.READ);
+					
+					if(fileStream.bytesAvailable == 0){					
+						fileStream.close();				
+					} else {
+						var presets:Object  = fileStream.readObject();						
+						
+						preset1 = String(presets.preset1).split(",");
+						preset2 = String(presets.preset2).split(",");
+						preset3 = String(presets.preset3).split(",");
+						trace(preset3);
+						fileStream.close();					
+					}								
+				}
+			}		
+			
+			protected function generateCheckboxes():void
+			{
+				checkBoxGroup.removeAllElements();
+				
+				for(var i:uint = 0; i<optionsList.selectedItem.data.length; i++){
+					checkBoxGroup.addElement(createCheckBox(optionsList.selectedItem.data[i]));
+				}
+			}
+			
+			private function scaleIcon(iconBitmapData:BitmapData, thumbnailWidth:Number, thumbnailHeight:Number):BitmapData
+			{
+				var matrix:Matrix = new Matrix();
+				matrix.scale(thumbnailWidth / iconBitmapData.width, thumbnailHeight / iconBitmapData.height);
+				
+				var scaledBitmapData:BitmapData = new BitmapData(thumbnailWidth, thumbnailHeight, true, 0x000000);
+				scaledBitmapData.draw(iconBitmapData, matrix);
+				
+				return scaledBitmapData;
+			}
+			
+			private function createCheckBox(iconSizeName:String):CheckBox
+			{
+				var checkBox:CheckBox = new CheckBox();
+				checkBox.label = iconSizeName + "px";
+				checkBox.name = iconSizeName; //A checkbox can't hold arbitrary data, so this will have to do
+				checkBox.width = 70;
+				checkBox.height = 25;
+				checkBox.toolTip = "icon-" + iconSizeName + ".png";
+				checkBox.selected = true;
+				checkBox.scaleX = checkBox.scaleY = 2.0; //I wanted to make the Icon skin bigger without modifying FXG files
+				return checkBox;
+			}
+			
+			protected function generateImage(event:MouseEvent):void
+			{
+				var folderName:Number = Math.round(Math.random()*1000000);
+				
+				for (var i:uint = 0; i<checkBoxGroup.numElements; i++)
+				{
+					var tempCheckBox:CheckBox = checkBoxGroup.getElementAt(i) as CheckBox;
+					
+					if(tempCheckBox.selected == true){
+						
+						var tempEncoder:PNGEncoder = new PNGEncoder();
+						var file:File = File.desktopDirectory.resolvePath("./launchicons-"+folderName+"/icon-"+tempCheckBox.name+".png");
+						
+						var fileStream:FileStream = new FileStream();
+						fileStream.open(file, FileMode.WRITE);
+						fileStream.writeBytes(tempEncoder.encode(scaleIcon(iconLarge.bitmapData, Number(tempCheckBox.name), Number(tempCheckBox.name))));
+						fileStream.close();
+					}					
+				}
+				
+				var xmlFile:File = File.desktopDirectory.resolvePath("./launchicons-"+folderName+"/icons.xml");
+				
+				var xmlFileStream:FileStream = new FileStream();
+				xmlFileStream.open(xmlFile, FileMode.WRITE);
+				
+				var xmlString:String = "<icon>\n";
+				
+				for (var j:uint = 0; j<checkBoxGroup.numElements; j++)
+				{
+					var tempCheckBoxforXML:CheckBox = checkBoxGroup.getElementAt(j) as CheckBox;
+
+					xmlString+= "\t<image"+tempCheckBoxforXML.name+"x"+tempCheckBoxforXML.name+">assets/launchicons/icon-"+tempCheckBoxforXML.name+".png</image"+
+						tempCheckBoxforXML.name+"x"+tempCheckBoxforXML.name+">\n";
+				}				
+				
+				xmlString += "</icon>";
+				xmlFileStream.writeUTFBytes(xmlString);
+				xmlFileStream.close();
+				
+				Alert.show("Icons successfully generated at Desktop/launchimages-" + String(folderName), "Icons Generated");
+			}			
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="HomeState"/>
+		<s:State name="PreviewState"/>
+		<s:State name="ExportState"/>
+	</s:states>
+	
+	<s:HGroup top="20" left="10" right="10" horizontalAlign="center" gap="100">
+		<s:Label text="Start" styleName="myLabel" fontSize="30" alpha.HomeState="1.0" alpha.PreviewState="0.5" alpha.ExportState="0.5"/>
+		<s:Label text="Preview" styleName="myLabel" fontSize="30" alpha.HomeState="0.5" alpha.PreviewState="1.0" alpha.ExportState="0.5"/>
+		<s:Label text="Export" styleName="myLabel" fontSize="30" alpha.HomeState="0.5" alpha.PreviewState="0.5" alpha.ExportState="1.0"/>
+	</s:HGroup>
+	
+	<!-- Home State -->
+	
+	<s:Label includeIn="HomeState" horizontalCenter="0" verticalCenter="-50" text="Select an Icon" styleName="myLabel"/>
+	<s:Button includeIn="HomeState" horizontalCenter="0" verticalCenter="50" label="Browse" click="grabImage(event)" styleName="myButton" width="200" height="70"/>
+	
+	<!-- Preview State -->
+	
+	<s:Image includeIn="PreviewState" source="@Embed('assets/images/android_phone.png')" bottom="20" left="100" width="280" height="500" smooth="true"/>
+	<s:Image includeIn="PreviewState" id="iconLarge" x="120" y="200" width="50" height="50"/>
+	
+	<s:VGroup includeIn="PreviewState" horizontalAlign="center" width="200" gap="30" verticalCenter="0" right="50">
+		<s:Button label="Configure" styleName="myButton" width="200" height="70" click="goConfigure(event)"/>
+		<s:Label text="or" styleName="myLabel" fontSize="30"/>
+		<s:Button label="Cancel" styleName="myButton" width="200" height="70" chromeColor="#C62828" click="goHome(event)"/>
+	</s:VGroup>
+	
+	<!-- Generate State -->	
+	
+	<s:HGroup includeIn="ExportState" top="100" left="20" right="20" horizontalAlign="center" gap="20">
+		<s:DropDownList id="optionsList" width="200" height="70" styleName="myDropDownList" 
+						requireSelection="true" selectedIndex="0" change="generateCheckboxes()" >
+			<s:layout>
+				<s:VerticalLayout variableRowHeight="false" rowHeight="40" gap="0" horizontalAlign="justify"/>
+			</s:layout>
+			<s:dataProvider>
+				<s:ArrayList>
+					<fx:Object label="iOS + Android" data="{AllArray}"/>
+					<fx:Object label="iOS Only" data="{iOSArray}"/>
+					<fx:Object label="Android Only" data="{AndroidArray}"/>
+					<fx:Object label="Desktop" data="{DesktopArray}"/>
+					<fx:Object label="Custom 1" data="{preset1}"/>
+					<fx:Object label="Custom 2" data="{preset2}"/>
+					<fx:Object label="Custom 3" data="{preset3}"/>
+				</s:ArrayList>
+			</s:dataProvider>
+		</s:DropDownList>
+		
+		<s:Button label="Start Over" width="200" height="70" styleName="myButton" click="goHome(event)" chromeColor="#7E57C2"/>
+		<s:Button label="Save Icons" width="200" height="70" click="generateImage(event)" styleName="myButton" chromeColor="#0288d1"/>	
+	</s:HGroup>
+	
+	<s:Scroller includeIn="ExportState" left="50" right="50" top="200" bottom="20">
+		<s:Group id="checkBoxGroup" width="100%" height="100%">
+			<s:layout>
+				<s:TileLayout />
+			</s:layout>
+		</s:Group>	
+	</s:Scroller>
+	
+</s:NavigatorContent>

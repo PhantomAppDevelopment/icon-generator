@@ -1,0 +1,72 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace ns "http://flex.apache.org/experimental/ns";
+
+
+@font-face 
+{
+	src: url("assets/fonts/raleway.ttf");
+	fontFamily: MyFont;
+	fontStyle: normal;
+	fontWeight: normal;
+	embedAsCFF: true;
+	advancedAntiAliasing: true;
+	
+}
+
+
+.myLabel
+{
+	fontFamily: MyFont;
+	color: #FFFFFF;
+	fontSize: 48px;
+}
+
+.myButton
+{
+	color: #FFFFFF;
+	fontSize: 24px;
+	fontFamily: MyFont;
+	chromeColor: #689F38;
+}
+
+mx|Alert
+{
+
+	chromeColor: #689F38;
+	color: #FFFFFF;
+	backgroundColor: #333333;
+}
+
+s|CheckBox
+{
+	color: #FFFFFF;
+	fontSize: 12px;
+}
+
+.myTextInput
+{
+	color: #FFFFFF;
+	fontSize: 20px;
+	contentBackgroundColor: #111111;
+}
+
+.myDropDownList
+{
+	textAlign: center;
+	selectionColor: #666666;
+	rollOverColor: #666666;
+	paddingLeft: 10px;
+	fontFamily: MyFont;
+	alternatingItemColors: #111111;
+	chromeColor: #689F38;
+	color: #FFFFFF;
+	fontSize: 20px;
+}
+
+mx|ToolTip
+{
+	backgroundColor: #555555;
+	color: #FFFFFF;
+}

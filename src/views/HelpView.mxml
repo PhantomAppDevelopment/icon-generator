@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+	
+	
+	<s:Label styleName="myLabel" text="Help" top="20" horizontalCenter="0" fontSize="30"/>
+	
+	<s:VGroup left="20" right="20" top="80" bottom="20" gap="20">
+		<s:Label styleName="myLabel" text="For ease of use the assets are generated in a random folder in your desktop with the following signature 'launchicons-######'" fontSize="20" width="100%"/>
+		<s:Label styleName="myLabel" text="An XML file is added in the generated icons folder, it contains the file names for copying and pasting tnto your descriptor file." fontSize="20" width="100%"/>
+		<s:Label styleName="myLabel" text="You can create up to 3 custom icon size sets by editting them in the Settings section." fontSize="20" width="100%"/>
+		<s:Label styleName="myLabel" text="The most efficient way to use this app is to drop the generated icons folder into your assets folder, remove the random number and copy the contents of the XML file into your descriptor file." fontSize="20" width="100%"/>
+		<s:Label styleName="myLabel" text="For best results provide your original assets in the highest resolution possible, this app works better by downscaling graphics." fontSize="20" width="100%"/>
+		<s:Label styleName="myLabel" text="iPhone 6 Plus is the only iPhone that supports landscape launch images" fontSize="20" width="100%"/>
+		<s:Label styleName="myLabel" text="iPad Pro, iPad 3 and iPad Air share the same launch image name. A legacy launch image is generated for iPad 3 and iPad Air incase you don't want iPad Pro support." fontSize="20" width="100%"/>
+	
+	</s:VGroup>
+	
+</s:NavigatorContent>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" creationComplete="init(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			private var presets:Object;			
+			private var fileStream:FileStream;
+	
+			[Bindable] private var preset1:String;
+			[Bindable] private var preset2:String;
+			[Bindable] private var preset3:String;
+			
+			protected function init(event:FlexEvent):void
+			{
+				presets = new Object();
+				loadCustomPresets()
+			}
+			
+			private function loadCustomPresets():void
+			{
+				var file:File = File.applicationStorageDirectory.resolvePath("iconpresets.data");
+				
+				if(file.exists)
+				{
+					fileStream = new FileStream();
+					fileStream.open(file, FileMode.READ);
+					
+					if(fileStream.bytesAvailable == 0){					
+						fileStream.close();				
+					} else {
+						presets  = fileStream.readObject();
+						
+						
+						preset1 = presets.preset1;
+						preset2 = presets.preset2;
+						preset3 = presets.preset3;
+
+						fileStream.close();					
+					}								
+				} else {
+					fileStream = new FileStream();
+					fileStream.open(file, FileMode.WRITE);
+					fileStream.writeObject(presets);
+					fileStream.close();
+				}
+			}
+			
+			protected function savePreset(presetNumber:Number):void
+			{
+				var file:File = File.applicationStorageDirectory.resolvePath("iconpresets.data");
+				
+				if(file.exists)
+				{										
+					if(presetNumber == 1){
+						presets.preset1 = preset1Input.text;	
+					} else if(presetNumber == 2){
+						presets.preset2 = preset2Input.text;	
+					} else if(presetNumber == 3){
+						presets.preset3 = preset3Input.text;	
+					} else {
+						//Do Nothing
+					}
+					
+					fileStream = new FileStream();
+					fileStream.open(file, FileMode.WRITE);
+					fileStream.writeObject(presets);
+					fileStream.close();										
+				}				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:Label styleName="myLabel" text="Settings" top="20" horizontalCenter="0" fontSize="30" />
+	
+	<s:Label styleName="myLabel" text="Customize your icon presets by setting your preferred icon sizes." top="80" left="20" fontSize="20" />
+	
+	<s:VGroup left="20" right="20" top="130" gap="20">
+		<s:HGroup gap="20" width="100%">
+			<s:TextInput id="preset1Input" text="{preset1}" prompt="Custom 1 e.g. 24,48,72,96" width="80%" height="50" styleName="myTextInput" restrict="0-9,"/>
+			<s:Button label="Save" width="100" height="50" styleName="myButton" click="savePreset(1)"/>
+		</s:HGroup>
+		
+		<s:HGroup gap="20" width="100%">
+			<s:TextInput id="preset2Input" text="{preset2}" prompt="Custom 2 e.g. 120, 256, 512" width="80%" height="50" styleName="myTextInput" restrict="0-9,"/>
+			<s:Button label="Save" width="100" height="50" styleName="myButton" click="savePreset(2)"/>
+		</s:HGroup>
+		
+		<s:HGroup gap="20" width="100%">
+			<s:TextInput id="preset3Input" text="{preset3}" prompt="Custom 3 e.g. 20,40,60,80" width="80%" height="50" styleName="myTextInput" restrict="0-9,"/>
+			<s:Button label="Save" width="100" height="50" styleName="myButton" click="savePreset(3)"/>
+		</s:HGroup>
+	</s:VGroup>
+	
+</s:NavigatorContent>
