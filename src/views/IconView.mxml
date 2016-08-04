@@ -8,7 +8,6 @@
 		<![CDATA[
 			import mx.controls.Alert;
 			import mx.events.FlexEvent;
-			import mx.graphics.codec.PNGEncoder;
 			
 			import spark.components.CheckBox;
 			import spark.events.IndexChangeEvent;
@@ -22,10 +21,11 @@
 			[Bindable] private var preset3:Array;
 			
 			private var fileRef:FileReference;
-			private var myEncoder:PNGEncoder;			
 			
 			protected function init(event:FlexEvent):void
 			{
+				PNGEncoder2.level = CompressionLevel.FAST;
+				
 				AllArray = new Array(29, 36, 40, 48, 50, 57, 58, 60, 72, 75, 76, 80, 87, 96, 100, 114, 120, 144, 152, 167, 180, 192, 512, 1024);
 				AndroidArray = new Array(36, 48, 72, 96, 144, 192, 512);
 				iOSArray = new Array(29, 40, 48, 50, 57, 58, 60, 72, 75, 76, 80, 87, 100, 114, 120, 144, 152, 167, 180, 512, 1024);
@@ -97,18 +97,7 @@
 					checkBoxGroup.addElement(createCheckBox(optionsList.selectedItem.data[i]));
 				}
 			}
-			
-			private function scaleIcon(iconBitmapData:BitmapData, thumbnailWidth:Number, thumbnailHeight:Number):BitmapData
-			{
-				var matrix:Matrix = new Matrix();
-				matrix.scale(thumbnailWidth / iconBitmapData.width, thumbnailHeight / iconBitmapData.height);
-				
-				var scaledBitmapData:BitmapData = new BitmapData(thumbnailWidth, thumbnailHeight, true, 0x000000);
-				scaledBitmapData.draw(iconBitmapData, matrix);
-				
-				return scaledBitmapData;
-			}
-			
+						
 			private function createCheckBox(iconSizeName:String):CheckBox
 			{
 				var checkBox:CheckBox = new CheckBox();
@@ -132,12 +121,11 @@
 					
 					if(tempCheckBox.selected == true){
 						
-						var tempEncoder:PNGEncoder = new PNGEncoder();
 						var file:File = File.desktopDirectory.resolvePath("./launchicons-"+folderName+"/icon-"+tempCheckBox.name+".png");
 						
 						var fileStream:FileStream = new FileStream();
 						fileStream.open(file, FileMode.WRITE);
-						fileStream.writeBytes(tempEncoder.encode(scaleIcon(iconLarge.bitmapData, Number(tempCheckBox.name), Number(tempCheckBox.name))));
+						fileStream.writeBytes(PNGEncoder2.encode(scaleIcon(iconLarge.bitmapData, Number(tempCheckBox.name), Number(tempCheckBox.name))));
 						fileStream.close();
 					}					
 				}
@@ -161,8 +149,19 @@
 				xmlFileStream.writeUTFBytes(xmlString);
 				xmlFileStream.close();
 				
-				Alert.show("Icons successfully generated at Desktop/launchimages-" + String(folderName), "Icons Generated");
+				Alert.show("Icons successfully generated at Desktop/launchicons-" + String(folderName), "Icons Generated");
 			}			
+			
+			private function scaleIcon(iconBitmapData:BitmapData, thumbnailWidth:Number, thumbnailHeight:Number):BitmapData
+			{
+				var matrix:Matrix = new Matrix();
+				matrix.scale(thumbnailWidth / iconBitmapData.width, thumbnailHeight / iconBitmapData.height);
+				
+				var scaledBitmapData:BitmapData = new BitmapData(thumbnailWidth, thumbnailHeight, true, 0x000000);
+				scaledBitmapData.drawWithQuality(iconBitmapData, matrix, null, null, null, true);
+				
+				return scaledBitmapData;
+			}
 			
 		]]>
 	</fx:Script>

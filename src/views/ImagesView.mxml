@@ -7,7 +7,6 @@
 			import mx.controls.Alert;
 			
 			import mx.events.FlexEvent;
-			import mx.graphics.codec.PNGEncoder;
 						
 			[Bindable] private var AllArray:Array;
 			[Bindable] private var iPhoneAllArray:Array;
@@ -18,10 +17,11 @@
 			[Bindable] private var iPadLandscapeArray:Array;		
 
 			private var fileRef:FileReference;
-			private var myEncoder:PNGEncoder;			
 			
 			protected function init(event:FlexEvent):void
 			{
+				PNGEncoder2.level = CompressionLevel.FAST;
+				
 				AllArray = new Array(
 					{name:"iPhone", file:"Default~iphone.png", w:320, h:480},
 					{name:"iPhone 4,4s", file:"Default@2x~iphone.png", w:640, h:960},
@@ -145,12 +145,11 @@
 				
 				for (var i:uint = 0; i<optionsList.selectedItem.data.length; i++)
 				{
-					var tempEncoder:PNGEncoder = new PNGEncoder();
 					var file:File = File.desktopDirectory.resolvePath("./launchimages-"+folderName+"/"+optionsList.selectedItem.data[i].file);
 					
 					var fileStream:FileStream = new FileStream();
 					fileStream.open(file, FileMode.WRITE);
-					fileStream.writeBytes(tempEncoder.encode(scaleImage(imageLarge.bitmapData, optionsList.selectedItem.data[i].w, optionsList.selectedItem.data[i].h)));
+					fileStream.writeBytes(PNGEncoder2.encode(scaleImage(imageLarge.bitmapData, optionsList.selectedItem.data[i].w, optionsList.selectedItem.data[i].h)));
 					fileStream.close();
 					
 				}
@@ -164,13 +163,13 @@
 				matrix.scale(thumbnailWidth / imageBitmapData.width, thumbnailHeight / imageBitmapData.height);
 				
 				var scaledBitmapData:BitmapData = new BitmapData(thumbnailWidth, thumbnailHeight, true, 0x000000);
-				scaledBitmapData.draw(imageBitmapData, matrix);
+				scaledBitmapData.drawWithQuality(imageBitmapData, matrix, null, null, null, true);
 				
 				return scaledBitmapData;
 			}
+			
 		]]>
-	</fx:Script>
-	
+	</fx:Script>	
 	
 	<s:states>
 		<s:State name="HomeState"/>
