@@ -5,9 +5,8 @@
 	<fx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
-			
 			import mx.events.FlexEvent;
-						
+									
 			[Bindable] private var AllArray:Array;
 			[Bindable] private var iPhoneAllArray:Array;
 			[Bindable] private var iPhonePortraitArray:Array;
@@ -55,12 +54,7 @@
 				);
 								
 				iPhoneLandscapeArray = new Array(
-					{name:"IPad 1,2 Portrait", file:"Default-Portrait~ipad.png", w:768, h:1024},
-					{name:"iPad 3, Air Portrait", file:"Old-Default-Portrait@2x~ipad.png", w:1536, h:2048},
-					{name:"iPad Pro Portrait", file:"Default-Portrait@2x~ipad.png", w:2048, h:2732},
-					{name:"IPad 1,2 Landscape", file:"Default-Landscape~ipad.png", w:1024, h:768},
-					{name:"iPad 3, Air Landscape", file:"Old-Default-Landscape@2x~ipad.png", w:2048, h:1536},
-					{name:"iPad Pro Landscape", file:"Default-Landscape@2x~ipad.png", w:2732, h:2048}
+					{name:"iPhone 6 Plus", file:"Default-Landscape-414w-736h@3x~iphone.png", w:2208, h:1242}
 				);
 				
 				iPadAllArray = new Array(
@@ -138,7 +132,7 @@
 				label.toolTip = sizeData.file;
 				return label;
 			}
-			
+						
 			protected function generateImage(event:MouseEvent):void
 			{
 				var folderName:Number = Math.round(Math.random()*1000000);
@@ -149,9 +143,8 @@
 					
 					var fileStream:FileStream = new FileStream();
 					fileStream.open(file, FileMode.WRITE);
-					fileStream.writeBytes(PNGEncoder2.encode(scaleImage(imageLarge.bitmapData, optionsList.selectedItem.data[i].w, optionsList.selectedItem.data[i].h)));
+					fileStream.writeBytes(PNGEncoder2.encode(scaleImage(imageLarge.bitmapData, optionsList.selectedItem.data[i].w, optionsList.selectedItem.data[i].h)));							
 					fileStream.close();
-					
 				}
 				
 				Alert.show("Images successfully generated at Desktop/launchscreens-" + String(folderName), "Images Generated");

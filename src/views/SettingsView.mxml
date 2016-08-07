@@ -7,16 +7,22 @@
 			import mx.events.FlexEvent;
 			
 			private var presets:Object;			
+			private var settings:Object;
 			private var fileStream:FileStream;
 	
 			[Bindable] private var preset1:String;
 			[Bindable] private var preset2:String;
 			[Bindable] private var preset3:String;
 			
+			[Bindable] private var bicubic:Boolean;
+			
 			protected function init(event:FlexEvent):void
 			{
+				
 				presets = new Object();
-				loadCustomPresets()
+				settings = new Object();
+				loadCustomPresets();
+				loadSettings();
 			}
 			
 			private function loadCustomPresets():void
@@ -28,12 +34,11 @@
 					fileStream = new FileStream();
 					fileStream.open(file, FileMode.READ);
 					
-					if(fileStream.bytesAvailable == 0){					
+					if(file.size == 0){					
 						fileStream.close();				
 					} else {
 						presets  = fileStream.readObject();
-						
-						
+												
 						preset1 = presets.preset1;
 						preset2 = presets.preset2;
 						preset3 = presets.preset3;
@@ -71,9 +76,52 @@
 				}				
 			}
 			
+			private function loadSettings():void
+			{
+				var file:File = File.applicationStorageDirectory.resolvePath("settings.data");
+				
+				if(file.exists)
+				{
+					fileStream = new FileStream();
+					fileStream.open(file, FileMode.READ);
+
+					if(file.size <= 1){					
+						fileStream.close();				
+					} else {
+						settings  = fileStream.readObject();
+						
+						if(settings.hasOwnProperty("bicubic")){
+							trace(settings.bicubic.valueOf());
+							bicubic = settings.bicubic.valueOf();					
+						}
+						
+						fileStream.close();					
+					}								
+				} else {
+					fileStream = new FileStream();
+					fileStream.open(file, FileMode.WRITE);
+					fileStream.writeObject(settings);
+					fileStream.close();
+				}
+			}
+			
+			protected function saveSetting(key:String, value:*):void
+			{
+				var file:File = File.applicationStorageDirectory.resolvePath("settings.data");
+				
+				if(file.exists)
+				{										
+					settings[key] = value;
+					
+					fileStream = new FileStream();
+					fileStream.open(file, FileMode.WRITE);
+					fileStream.writeObject(settings);
+					fileStream.close();
+				}				
+			}
+			
 		]]>
-	</fx:Script>
-	
+	</fx:Script>	
 	
 	<s:Label styleName="myLabel" text="Settings" top="20" horizontalCenter="0" fontSize="30" />
 	
@@ -95,5 +143,9 @@
 			<s:Button label="Save" width="100" height="50" styleName="myButton" click="savePreset(3)"/>
 		</s:HGroup>
 	</s:VGroup>
+	
+	<s:Label styleName="myLabel" text="PNG Icons Quality" top="350" left="20" fontSize="20" />
+	<s:CheckBox change="saveSetting('bicubic', bicubicCheck.selected)" id="bicubicCheck" selected="{bicubic}" top="390" left="20"
+				label="Use Bicubic Interpolation" toolTip="Increases the quality of generated PNG icons (Icon generation takes more time)." scaleX="2.0" scaleY="2.0"/>
 	
 </s:NavigatorContent>

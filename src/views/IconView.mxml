@@ -12,6 +12,8 @@
 			import spark.components.CheckBox;
 			import spark.events.IndexChangeEvent;
 			
+			import utils.Bicubic;
+			
 			[Bindable] private var AllArray:Array;
 			[Bindable] private var AndroidArray:Array;
 			[Bindable] private var iOSArray:Array;		
@@ -20,7 +22,9 @@
 			[Bindable] private var preset2:Array;
 			[Bindable] private var preset3:Array;
 			
+			private var bicubic:Boolean;
 			private var fileRef:FileReference;
+			private var settings:Object;
 			
 			protected function init(event:FlexEvent):void
 			{
@@ -63,11 +67,15 @@
 			{
 				currentState = "ExportState";
 				loadCustomPresets();
+				
+				settings = new Object();
+				loadSettings();
+				
 				generateCheckboxes();
 			}
 			
 			private function loadCustomPresets():void
-			{
+			{				
 				var file:File = File.applicationStorageDirectory.resolvePath("iconpresets.data");
 				
 				if(file.exists)
@@ -75,7 +83,7 @@
 					var fileStream:FileStream = new FileStream();
 					fileStream.open(file, FileMode.READ);
 					
-					if(fileStream.bytesAvailable == 0){					
+					if(file.size <= 1){					
 						fileStream.close();				
 					} else {
 						var presets:Object  = fileStream.readObject();						
@@ -83,11 +91,40 @@
 						preset1 = String(presets.preset1).split(",");
 						preset2 = String(presets.preset2).split(",");
 						preset3 = String(presets.preset3).split(",");
-						trace(preset3);
 						fileStream.close();					
 					}								
 				}
 			}		
+			
+			private function loadSettings():void
+			{
+				var file:File = File.applicationStorageDirectory.resolvePath("settings.data");
+				
+				if(file.exists)
+				{
+					var fileStream:FileStream = new FileStream();
+					fileStream.open(file, FileMode.READ);
+					
+					if(file.size <= 1){					
+						fileStream.close();				
+					} else {
+						settings  = fileStream.readObject();
+						
+						if(settings.hasOwnProperty("bicubic")){
+							bicubic = settings.bicubic.valueOf();					
+						} else {
+							bicubic = false;
+						}
+						
+						fileStream.close();					
+					}								
+				} else {
+					
+					//Settings file doesn't exists, so we fallback to the defaults.
+					
+					bicubic = false;
+				}
+			}
 			
 			protected function generateCheckboxes():void
 			{
@@ -125,7 +162,12 @@
 						
 						var fileStream:FileStream = new FileStream();
 						fileStream.open(file, FileMode.WRITE);
-						fileStream.writeBytes(PNGEncoder2.encode(scaleIcon(iconLarge.bitmapData, Number(tempCheckBox.name), Number(tempCheckBox.name))));
+						
+						if(bicubic == true){
+							fileStream.writeBytes(PNGEncoder2.encode(Bicubic.interpolateBicubic(iconLarge.bitmapData, Number(tempCheckBox.name), Number(tempCheckBox.name))));
+						} else {
+							fileStream.writeBytes(PNGEncoder2.encode(scaleIcon(iconLarge.bitmapData, Number(tempCheckBox.name), Number(tempCheckBox.name))));							
+						}
 						fileStream.close();
 					}					
 				}
