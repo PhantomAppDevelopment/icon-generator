@@ -7,7 +7,7 @@ Some of the key features are:
   - Generation of Android, iOS and Desktop icons.
   - Generation of an XML file for copying and pasting into the app descriptor file.
   - Custom presets of icon sizes.
-  - Generation of iOS launch screens for iPhones and iPads in Portrait and landscape modes.
+  - Generation of iOS launch screens for iPhones and iPads in Portrait and Landscape modes.
   - Free and open source!
 
 This application is based on the [Application Icons](http://help.adobe.com/en_US/air/build/WS901d38e593cd1bac1e63e3d129907d2886-8000.html) article from Adobe AIR's site.
@@ -24,6 +24,6 @@ You can test this app by downloading it directly from GitHub. You only require t
 
 ## Donations
 
-Donations are not required but are greatly appreciated. Feel free to support the development of free tools and examples.
+Feel free to support the development of free tools and examples. Your donations are greatly appreciated.
 
 [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MQPLL355ZAKXW)
