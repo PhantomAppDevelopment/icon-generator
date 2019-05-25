@@ -26,4 +26,4 @@ You can test this app by downloading it directly from GitHub. You only require t
 
 Feel free to support the development of free tools and examples. Your donations are greatly appreciated.
 
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MQPLL355ZAKXW)
+[![Become a Patron!](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/bePatron?u=20521425)
